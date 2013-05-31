@@ -1,7 +1,7 @@
 " scratch - Emacs like scratch buffer
 " Version: 0.1.1
 " Copyright (C) 2007 kana <http://whileimautomaton.net/>
-" License: MIT license  {{{
+" License: MIT license
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
 "     "Software"), to deal in the Software without restriction, including
@@ -20,21 +20,11 @@
 "     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 "     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 "     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-" }}}
-" Variables  "{{{1
 
 let s:bufnr = 0  " The buffer number of the scratch buffer
 
-
-
-
-
-
-
-
-" Interfaces  "{{{1
-function! scratch#open()  "{{{2
-  if !(s:bufnr && bufexists(s:bufnr))  " The scratch buffer does not exist.
+function! scratch#open()
+  if !(s:bufnr && bufexists(s:bufnr))  " If the scratch buffer does not exist
     " Create the scratch buffer.
     " To avoid E303, we must process in the following order:
     " (1) create unnamed buffer,
@@ -84,10 +74,7 @@ function! scratch#open()  "{{{2
   endif
 endfunction
 
-
-
-
-function! scratch#close()  "{{{2
+function! scratch#close()
   let scratch_winnr = bufwinnr(s:bufnr)
   if scratch_winnr == -1  " The scratch buffer is not visible.
     return
@@ -105,20 +92,14 @@ function! scratch#close()  "{{{2
   endif
 endfunction
 
-
-
-
-function! scratch#evaluate_linewise(line1, line2, adjust_cursorp)  "{{{2
+function! scratch#evaluate_linewise(line1, line2, adjust_cursorp)
   let bufnr = bufnr('')
   call scratch#evaluate([bufnr, a:line1, 1, 0],
      \                  [bufnr, a:line2, len(getline(a:line2)), 0],
      \                  a:adjust_cursorp)
 endfunction
 
-
-
-
-function! scratch#evaluate(range_head, range_tail, adjust_cursorp)  "{{{2
+function! scratch#evaluate(range_head, range_tail, adjust_cursorp)
   " Yank the script.
   let original_pos = getpos('.')
   let original_reg_a = @a
@@ -145,15 +126,7 @@ function! scratch#evaluate(range_head, range_tail, adjust_cursorp)  "{{{2
   endif
 endfunction
 
-
-
-
-
-
-
-
-" Misc.  "{{{1
-function! s:initialize_scratch_buffer()  "{{{2
+function! s:initialize_scratch_buffer()
   if &l:filetype == ''
     setlocal filetype=vim
   endif
@@ -173,12 +146,4 @@ function! s:initialize_scratch_buffer()  "{{{2
   silent! map <buffer> <unique> <C-j>  <Plug>scratch-evaluate
 endfunction
 
-
-
-
-
-
-
-
-" __END__  "{{{1
 " vim: foldmethod=marker
