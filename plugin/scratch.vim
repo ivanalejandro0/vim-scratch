@@ -43,13 +43,14 @@ if !exists('g:scratch_buffer_name')
   let g:scratch_buffer_name = '*Scratch*'
 endif
 
+" for a nice explanation in splits you can look at
+" http://technotales.wordpress.com/2010/04/29/vim-splits-a-guide-to-doing-exactly-what-you-want/
 if !exists('g:scratch_show_command')
-  " let g:scratch_show_command = 'topleft split | hide buffer'  " original
+  " the command has to have the " | hide buffer" part, it's used to switch to
+  " the scratch.
   let g:scratch_show_command = 'botright split | hide buffer'
 endif
 
 let g:loaded_scratch = 1
 
 nnoremap <leader>s :ScratchOpen<CR>
-
-" vim: foldmethod=marker
