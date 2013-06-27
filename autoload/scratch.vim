@@ -25,15 +25,28 @@ let s:bufnr = 0  " The buffer number of the scratch buffer
 
 function! scratch#open()
   if !(s:bufnr && bufexists(s:bufnr))  " If the scratch buffer does not exist
+      call scratch#create()
+  else  " The scratch buffer exists.
+      call scratch#show()
+  endif
+endfunction
+
+function! scratch#create()
     " Create the scratch buffer.
     " To avoid E303, we must process in the following order:
     " (1) create unnamed buffer,
     " (2) set 'noswapfile',
     " (3) name as specified by g:scratch_buffer_name.
+
+    " Hide the current buffer
     let original_bufnr = bufnr('%')
     let original_bufhidden = &l:bufhidden
     let &l:bufhidden = 'hide'
+
+    " Hide current & create new buffer
     hide enew
+
+    " Create the new buffer and set the needed options
     setlocal bufhidden=hide buflisted buftype=nofile noswapfile
     file `=g:scratch_buffer_name`
     let s:bufnr = bufnr('%')
@@ -45,19 +58,21 @@ function! scratch#open()
 
     " Switch back to the original buffer.
     if original_bufnr != s:bufnr
-      execute 'buffer' original_bufnr
-      let &l:bufhidden = original_bufhidden
+        execute 'buffer' original_bufnr
+        let &l:bufhidden = original_bufhidden
     endif
 
     " Open the scratch buffer.
     if original_bufnr == s:bufnr && tabpagewinnr(tabpagenr(), '$') == 1
-      " Do nothing -- in this case, the scratch buffer will be showed in two
-      " windows if g:scratch_show_command contains a command to split window.
-      " So don't use g:scratch_show_command to avoid such situation.
+        " Do nothing -- in this case, the scratch buffer will be showed in two
+        " windows if g:scratch_show_command contains a command to split window.
+        " So don't use g:scratch_show_command to avoid such situation.
     else
-      execute g:scratch_show_command s:bufnr
+        execute g:scratch_show_command s:bufnr
     endif
-  else  " The scratch buffer exists.
+endfunction
+
+function! scratch#show()
     " FIXME: DRY: 'switchbuf' useopen.
     let winnr = bufwinnr(s:bufnr)
     if winnr == -1  " The scratch buffer is not visible.
@@ -71,7 +86,14 @@ function! scratch#open()
     else
       execute winnr 'wincmd w'
     endif
-  endif
+endfunction
+
+function! scratch#append(text)
+    if s:bufnr && bufexists(s:bufnr)
+        normal! G
+        put = a:text
+
+    endif
 endfunction
 
 function! scratch#close()
